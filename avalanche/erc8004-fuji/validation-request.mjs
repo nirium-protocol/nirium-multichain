@@ -1,23 +1,25 @@
 // validationRequest(validator, agentId, requestURI, requestHash) on the Fuji ValidationRegistry.
 // requestHash = keccak256 of the receipt file's EXACT bytes.
 // Usage:
-//   node validation-request.mjs --validator <address> --agent-id <n> --cid <CID> --receipt <file.json>
+//   node validation-request.mjs --validator <address> --agent-id <n> (--cid <CID> | --uri <url>) --receipt <file.json>
 //                               [--dry-run [--from <address>]]
 // Key (live runs only): env NIRIUM_EVM_AGENT_KEY (owner or operator of agentId). Never printed.
 import { parseEventLogs, zeroAddress } from "viem";
 import { identityAbi, validationAbi } from "./abi.mjs";
 import {
   IDENTITY_REGISTRY, VALIDATION_REGISTRY, EXPLORER_TX, publicClient, parseArgs, need, asAddress,
-  hashFile, resolveAccount, walletFor, simulateAndEstimate, gasReport, run,
+  hashFile, resolveAccount, sendSimulated, simulateAndEstimate, gasReport, run,
 } from "./common.mjs";
 
 run(async () => {
   const args = parseArgs();
   const validator = asAddress(need(args, "validator"), "--validator");
   const agentId = BigInt(need(args, "agent-id"));
-  const cid = need(args, "cid").replace(/^ipfs:\/\//, "");
-  const receiptPath = need(args, "receipt", "receipt JSON file, exactly as uploaded to IPFS");
-  const requestURI = `ipfs://${cid}`;
+  // --uri takes any URI (e.g. an https URL pinned to a commit); --cid builds ipfs://<CID>.
+  const requestURI = typeof args.uri === "string"
+    ? args.uri
+    : `ipfs://${need(args, "cid", "or pass --uri <url>").replace(/^ipfs:\/\//, "")}`;
+  const receiptPath = need(args, "receipt", "receipt JSON file, byte-for-byte what the URI serves");
   const { hash: requestHash, size } = hashFile(receiptPath);
   const { account, signer } = resolveAccount(args, "NIRIUM_EVM_AGENT_KEY");
 
@@ -49,7 +51,7 @@ run(async () => {
 
   if (args["dry-run"]) { console.log("--dry-run: nothing sent."); return; }
 
-  const hash = await walletFor(signer).writeContract(sim.request);
+  const hash = await sendSimulated(signer, sim.request);
   console.log(`tx sent ${hash}`);
   const receipt = await publicClient.waitForTransactionReceipt({ hash });
   if (receipt.status !== "success") throw new Error(`tx reverted in block ${receipt.blockNumber}`);

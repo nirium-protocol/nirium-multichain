@@ -5,7 +5,7 @@
 import { parseEventLogs } from "viem";
 import { identityAbi } from "./abi.mjs";
 import {
-  IDENTITY_REGISTRY, EXPLORER_TX, publicClient, parseArgs, need, resolveAccount, walletFor,
+  IDENTITY_REGISTRY, EXPLORER_TX, publicClient, parseArgs, need, resolveAccount, sendSimulated,
   simulateAndEstimate, gasReport, run,
 } from "./common.mjs";
 
@@ -27,7 +27,7 @@ run(async () => {
 
   if (args["dry-run"]) { console.log("--dry-run: nothing sent."); return; }
 
-  const hash = await walletFor(signer).writeContract(sim.request);
+  const hash = await sendSimulated(signer, sim.request);
   console.log(`tx sent ${hash}`);
   const receipt = await publicClient.waitForTransactionReceipt({ hash });
   if (receipt.status !== "success") throw new Error(`tx reverted in block ${receipt.blockNumber}`);
