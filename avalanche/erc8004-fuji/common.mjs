@@ -71,6 +71,13 @@ export function walletFor(signer) {
   return createWalletClient({ account: signer, chain: avalancheFuji, transport: http(RPC_URL) });
 }
 
+// Sends a simulated request signed locally. The simulation was run with the account as a plain
+// address, so its request carries an address; without overriding it, viem would ask the RPC to
+// sign (eth_sendTransaction), which public RPCs refuse.
+export function sendSimulated(signer, request) {
+  return walletFor(signer).writeContract({ ...request, account: signer });
+}
+
 // Simulates and estimates gas. Returns { request, result, gas } or throws with the revert reason.
 export async function simulateAndEstimate({ address, abi, functionName, args, account }) {
   try {

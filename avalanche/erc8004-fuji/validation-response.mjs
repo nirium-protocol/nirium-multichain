@@ -12,7 +12,7 @@ import { parseEventLogs, zeroHash } from "viem";
 import { validationAbi } from "./abi.mjs";
 import {
   VALIDATION_REGISTRY, EXPLORER_TX, publicClient, parseArgs, need, asBytes32, hashFile,
-  resolveAccount, walletFor, simulateAndEstimate, gasReport, run,
+  resolveAccount, sendSimulated, simulateAndEstimate, gasReport, run,
 } from "./common.mjs";
 
 run(async () => {
@@ -48,7 +48,7 @@ run(async () => {
 
   if (args["dry-run"]) { console.log("--dry-run: nothing sent."); return; }
 
-  const hash = await walletFor(signer).writeContract(sim.request);
+  const hash = await sendSimulated(signer, sim.request);
   console.log(`tx sent ${hash}`);
   const receipt = await publicClient.waitForTransactionReceipt({ hash });
   if (receipt.status !== "success") throw new Error(`tx reverted in block ${receipt.blockNumber}`);

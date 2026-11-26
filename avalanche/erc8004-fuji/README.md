@@ -47,7 +47,7 @@ node register.mjs --uri ipfs://<agent card CID>
 
 # 3. Validation request (sent by the owner or operator of agentId)
 node validation-request.mjs --validator 0x<validator> --agent-id <n> \
-     --cid <receipt CID> --receipt ./receipt.json [--dry-run]
+     (--cid <receipt CID> | --uri <https URL pinned to a commit>) --receipt ./receipt.json [--dry-run]
 
 # 4. Validator response (only the address named in step 3)
 node validation-response.mjs --request-hash 0x<requestHash> --response <0-100> \
@@ -97,3 +97,5 @@ key in the environment.
 - Fuji's public RPC rejects `eth_getLogs` over more than 100 blocks.
 - Routescan returns `logIndex` as `"0x"` when it is 0. Already handled.
 - `samples/sample-receipt.json` is a synthetic receipt for dry runs. It is not real.
+- Live writes sign locally (`sendSimulated` in `common.mjs`). Reusing a simulated request as is
+  makes viem ask the RPC to sign (`eth_sendTransaction`), which public RPCs refuse.
