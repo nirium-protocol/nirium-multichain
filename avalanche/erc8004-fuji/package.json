@@ -1,0 +1,12 @@
+{
+  "name": "nirium-erc8004-fuji",
+  "private": true,
+  "type": "module",
+  "description": "Scripts de referencia para ERC-8004 en Avalanche Fuji: register, validationRequest, validationResponse y lectura.",
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "viem": "2.58.7"
+  }
+}

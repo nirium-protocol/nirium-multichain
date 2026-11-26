@@ -1,0 +1,38 @@
+{
+  "version": "nirium-payment-binding-v1",
+  "content_sha256": "9b076b16ddfb1b05131062c77af68530eb96c7d693affa40bd3b4b51657c2fa6",
+  "record": {
+    "labels": [
+      "selftest"
+    ],
+    "payment": {
+      "amount": "1001",
+      "asset": "0xB97EF9Ef8734C71904D8002F8b6Bc66Dd9c48a6E",
+      "decimals": 6,
+      "from": "0xc5fd0c1179562ab10800744655427bba5a9dcf38",
+      "locator": {
+        "index": 17,
+        "kind": "evm-log"
+      },
+      "network": "eip155:43114",
+      "to": "0x28dc25bf88bf06fc0a3af1747d1aa4a21f313ed0",
+      "tx": "0x6a1307bc48a157de236ea03440ea2cb6ad4f27e22dd9c89a4345b4c3edb270c7",
+      "x402": {
+        "nonce": "0x4460df3e9f8bb1759f877e0171d10b9c13bb939a0659786527ce726dcc5e93f5",
+        "resource": "unknown (third-party tx, test fixture only)",
+        "scheme": "exact"
+      }
+    },
+    "purpose": {
+      "note": "verifier test against a third-party PayAI settlement, not ours",
+      "ref": "fixture-june-2026"
+    }
+  },
+  "network": "eip155:43114",
+  "agent": {
+    "alg": "eip191-secp256k1",
+    "key": "0xF709b432C117775C3505a9B4fF4835bbcE75EC68",
+    "statement": "nirium-audit-v1:9b076b16ddfb1b05131062c77af68530eb96c7d693affa40bd3b4b51657c2fa6",
+    "signature": "0xd653db18714b063a8baa8eb426e00a4731110eea373b1ee520350cae75c089cc26656339f0ead633d6af00cf52e555f7f4f826772f35620baf30131a0ef6f5001c"
+  }
+}
