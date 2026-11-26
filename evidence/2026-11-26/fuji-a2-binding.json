@@ -1,0 +1,38 @@
+{
+  "version": "nirium-payment-binding-v1",
+  "content_sha256": "09739cb9bd6dbefc7b381e2559061a0b93600a4ac3664cbd99c3505f5b9b3651",
+  "record": {
+    "labels": [
+      "selftest"
+    ],
+    "payment": {
+      "amount": "10000",
+      "asset": "0x5425890298aed601595a70AB815c96711a31Bc65",
+      "decimals": 6,
+      "from": "0x9deC1D6AD171bEb9b0cFd5AfC27895346f49637D",
+      "locator": {
+        "index": 1,
+        "kind": "evm-log"
+      },
+      "network": "eip155:43113",
+      "to": "0x241d8C05f2a33F8701B933B704d329CC88367007",
+      "tx": "0x7ca309a41b019393d2d9e77ec89aff54a2d644b37657b8f2eaa93331cc6429f9",
+      "x402": {
+        "nonce": "0x1cf30f775fe29264b96d700fc09d7cbb46b91afbec5b32d4f1c01e3247b38be5",
+        "resource": "http://localhost:4021/paid",
+        "scheme": "exact"
+      }
+    },
+    "purpose": {
+      "note": "Nirium sprint day 1 selftest on Avalanche Fuji",
+      "ref": "selftest-2026-11-26-fuji-01"
+    }
+  },
+  "agent": {
+    "alg": "eip191-secp256k1",
+    "key": "0x9deC1D6AD171bEb9b0cFd5AfC27895346f49637D",
+    "signature": "0x2d99f70e37840b5332dbea6002aa90ab454fd0142633fac232e006d265d710b67be0761261f14806cf4e8f630a0a70e15f7bf90b5b348ed82a983baaca001b691c",
+    "statement": "nirium-audit-v1:09739cb9bd6dbefc7b381e2559061a0b93600a4ac3664cbd99c3505f5b9b3651"
+  },
+  "network": "eip155:43113"
+}
