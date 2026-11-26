@@ -1,0 +1,6 @@
+{
+  "name": "Nirium selftest agent (Avalanche Fuji)",
+  "description": "Test agent used by the Nirium team to point ERC-8004 validation requests at Nirium payment-binding receipts. Self-test only; not a production agent.",
+  "receiptFormat": "nirium-payment-binding-v1",
+  "repository": "https://github.com/nirium-protocol/nirium-multichain"
+}

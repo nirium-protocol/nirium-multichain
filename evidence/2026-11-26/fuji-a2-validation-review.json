@@ -1,0 +1,101 @@
+{
+  "version": "nirium-validation-review-v1",
+  "subject": "evidence/2026-11-26/fuji-a2-binding.json",
+  "subjectNetwork": "eip155:43113",
+  "verifier": "avalanche/verify-evm-receipt.mjs",
+  "result": "VALID",
+  "score": 100,
+  "checks": [
+    {
+      "name": "version == nirium-payment-binding-v1",
+      "ok": true,
+      "detail": "version=nirium-payment-binding-v1"
+    },
+    {
+      "name": "network == record.payment.network",
+      "ok": true,
+      "detail": "doc=eip155:43113 payment=eip155:43113"
+    },
+    {
+      "name": "locator.kind == evm-log",
+      "ok": true,
+      "detail": "kind=evm-log"
+    },
+    {
+      "name": "content_sha256 == sha256(canonical(record))",
+      "ok": true,
+      "detail": "doc=09739cb9bd6dbefc7b381e2559061a0b93600a4ac3664cbd99c3505f5b9b3651 computed=09739cb9bd6dbefc7b381e2559061a0b93600a4ac3664cbd99c3505f5b9b3651"
+    },
+    {
+      "name": "asset is Circle USDC for this network",
+      "ok": true,
+      "detail": "asset=0x5425890298aed601595a70AB815c96711a31Bc65 expected=0x5425890298aed601595a70AB815c96711a31Bc65"
+    },
+    {
+      "name": "decimals == 6",
+      "ok": true,
+      "detail": "decimals=6"
+    },
+    {
+      "name": "network == eip155:<RPC chainId>",
+      "ok": true,
+      "detail": "rpc chainId=43113"
+    },
+    {
+      "name": "tx status success (1)",
+      "ok": true,
+      "detail": "status=success block=61670610"
+    },
+    {
+      "name": "log 1 emitted by asset",
+      "ok": true,
+      "detail": "emitter=0x5425890298aed601595a70ab815c96711a31bc65"
+    },
+    {
+      "name": "log 1 is Transfer",
+      "ok": true,
+      "detail": "event=Transfer"
+    },
+    {
+      "name": "Transfer.from == payment.from",
+      "ok": true,
+      "detail": "log=0x9deC1D6AD171bEb9b0cFd5AfC27895346f49637D"
+    },
+    {
+      "name": "Transfer.to == payment.to",
+      "ok": true,
+      "detail": "log=0x241d8C05f2a33F8701B933B704d329CC88367007"
+    },
+    {
+      "name": "Transfer.value == payment.amount",
+      "ok": true,
+      "detail": "log=10000 record=10000"
+    },
+    {
+      "name": "AuthorizationUsed(payment.from, x402.nonce) in same tx",
+      "ok": true,
+      "detail": "found 1: 0x9deC1D6AD171bEb9b0cFd5AfC27895346f49637D/0x1cf30f775fe29264b96d700fc09d7cbb46b91afbec5b32d4f1c01e3247b38be5"
+    },
+    {
+      "name": "agent.alg == eip191-secp256k1",
+      "ok": true,
+      "detail": "alg=eip191-secp256k1"
+    },
+    {
+      "name": "agent.statement == nirium-audit-v1:<content_sha256>",
+      "ok": true,
+      "detail": "statement=nirium-audit-v1:09739cb9bd6dbefc7b381e2559061a0b93600a4ac3664cbd99c3505f5b9b3651"
+    },
+    {
+      "name": "agent.key == payment.from (payer signs)",
+      "ok": true,
+      "detail": "key=0x9deC1D6AD171bEb9b0cFd5AfC27895346f49637D"
+    },
+    {
+      "name": "EIP-191 signature by agent.key over agent.statement",
+      "ok": true,
+      "detail": ""
+    }
+  ],
+  "note": "Team self-test: the validator key is also a team key. This shows the ERC-8004 mechanics, not an independent third-party validation."
+}
