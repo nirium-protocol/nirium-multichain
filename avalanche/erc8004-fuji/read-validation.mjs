@@ -1,22 +1,22 @@
-// Solo lectura. Dado un requestHash: estado guardado + eventos ValidationRequest/ValidationResponse.
-// El requestURI NO se guarda en el contrato, solo vive en el evento ValidationRequest.
-// Uso:
+// Read only. Given a requestHash: stored status + ValidationRequest/ValidationResponse events.
+// The requestURI is NOT stored in the contract; it only lives in the ValidationRequest event.
+// Usage:
 //   node read-validation.mjs --request-hash <0x..> [--from-block <n> [--to-block <n>]]
-//   node read-validation.mjs --agent-id <n>        (lista los requestHash del agente)
-// Logs: por defecto se piden al indexador de Routescan (todo el rango, sin llave).
-// Con --from-block se piden por RPC en ventanas de 100 bloques (limite del RPC publico),
-// hasta --to-block o latest; tope de 500 llamadas. Sirve para confirmar sin depender del indexador.
+//   node read-validation.mjs --agent-id <n>        (lists the agent's requestHashes)
+// Logs: by default fetched from the Routescan indexer (whole range, no key).
+// With --from-block they are fetched over RPC in 100-block windows (public RPC limit),
+// up to --to-block or latest; capped at 500 calls. Use it to confirm without trusting the indexer.
 import { decodeEventLog, encodeEventTopics } from "viem";
 import { validationAbi } from "./abi.mjs";
 import {
   VALIDATION_REGISTRY, ROUTESCAN, publicClient, parseArgs, asBytes32, revertReason, bigintJson, run,
 } from "./common.mjs";
 
-// El RPC publico de Fuji rechaza eth_getLogs de mas de 100 bloques (probado 26-nov-2026:
-// "exceeds the maximum of 100 blocks"). Con un RPC propio se puede subir via env.
+// Fuji's public RPC rejects eth_getLogs over more than 100 blocks (tested 26-nov-2026:
+// "exceeds the maximum of 100 blocks"). With your own RPC, raise it through the environment.
 const RPC_WINDOW = BigInt(process.env.RPC_LOG_WINDOW || 100);
 
-// Routescan devuelve "0x" (vacio) para el valor 0 en logIndex/transactionIndex.
+// Routescan returns "0x" (empty) for the value 0 in logIndex/transactionIndex.
 const hexBig = (v) => (v === "0x" || v === "" || v == null ? 0n : BigInt(v));
 
 async function logsRoutescan(topic0, topic3) {
@@ -25,7 +25,7 @@ async function logsRoutescan(topic0, topic3) {
   const res = await fetch(url);
   const body = await res.json();
   if (body.status === "0" && /no records/i.test(body.message ?? "")) return [];
-  if (!Array.isArray(body.result)) throw new Error(`Routescan respondio: ${JSON.stringify(body).slice(0, 200)}`);
+  if (!Array.isArray(body.result)) throw new Error(`Routescan answered: ${JSON.stringify(body).slice(0, 200)}`);
   return body.result.map((l) => ({
     address: l.address, topics: l.topics, data: l.data,
     blockNumber: hexBig(l.blockNumber), transactionHash: l.transactionHash, logIndex: Number(hexBig(l.logIndex)),
@@ -35,7 +35,7 @@ async function logsRoutescan(topic0, topic3) {
 async function logsRpc(topic0, topic3, fromBlock, toBlock) {
   const latest = toBlock ?? await publicClient.getBlockNumber();
   const calls = (latest - fromBlock) / RPC_WINDOW + 1n;
-  if (calls > 500n) throw new Error(`rango de ${latest - fromBlock} bloques = ${calls} llamadas de ${RPC_WINDOW}; acota con --to-block o usa Routescan`);
+  if (calls > 500n) throw new Error(`a range of ${latest - fromBlock} blocks = ${calls} calls of ${RPC_WINDOW}; narrow it with --to-block or use Routescan`);
   const out = [];
   for (let start = fromBlock; start <= latest; start += RPC_WINDOW) {
     const end = start + RPC_WINDOW - 1n > latest ? latest : start + RPC_WINDOW - 1n;
@@ -56,8 +56,8 @@ function decode(eventName, l) {
 
 run(async () => {
   const args = parseArgs();
-  console.log(`red      Fuji 43113`);
-  console.log(`contrato ValidationRegistry ${VALIDATION_REGISTRY}`);
+  console.log(`network  Fuji 43113`);
+  console.log(`contract ValidationRegistry ${VALIDATION_REGISTRY}`);
   const version = await publicClient.readContract({ address: VALIDATION_REGISTRY, abi: validationAbi, functionName: "getVersion" });
   const identity = await publicClient.readContract({ address: VALIDATION_REGISTRY, abi: validationAbi, functionName: "getIdentityRegistry" });
   console.log(`version  ${version} | identityRegistry ${identity}`);
@@ -66,7 +66,7 @@ run(async () => {
     const hashes = await publicClient.readContract({
       address: VALIDATION_REGISTRY, abi: validationAbi, functionName: "getAgentValidations", args: [BigInt(args["agent-id"])],
     });
-    console.log(`agentId ${args["agent-id"]}: ${hashes.length} solicitudes`);
+    console.log(`agentId ${args["agent-id"]}: ${hashes.length} requests`);
     for (const h of hashes) console.log(`  ${h}`);
     return;
   }
@@ -74,23 +74,23 @@ run(async () => {
   const requestHash = asBytes32(args["request-hash"] ?? "", "--request-hash");
   console.log(`requestHash ${requestHash}`);
 
-  // 1. Estado guardado. getValidationStatus revierte "unknown" si no existe.
+  // 1. Stored status. getValidationStatus reverts "unknown" when it does not exist.
   try {
     const [validatorAddress, agentId, response, responseHash, tag, lastUpdate] = await publicClient.readContract({
       address: VALIDATION_REGISTRY, abi: validationAbi, functionName: "getValidationStatus", args: [requestHash],
     });
-    console.log("estado guardado:");
+    console.log("stored status:");
     console.log(bigintJson({ validatorAddress, agentId, response, responseHash, tag, lastUpdate,
       lastUpdateIso: new Date(Number(lastUpdate) * 1000).toISOString() }));
-    console.log("nota: el struct no expone hasResponse; response 0 puede ser 'sin respuesta' o 'respuesta 0'. Ver eventos.");
+    console.log("note: the struct does not expose hasResponse; response 0 can mean 'no response' or 'response 0'. Check the events.");
   } catch (err) {
-    console.log(`estado guardado: no existe (${revertReason(err)})`);
+    console.log(`stored status: does not exist (${revertReason(err)})`);
   }
 
-  // 2. Eventos. requestHash es el tercer indexado (topics[3]) en los dos eventos.
+  // 2. Events. requestHash is the third indexed field (topics[3]) in both events.
   const [reqTopic] = encodeEventTopics({ abi: validationAbi, eventName: "ValidationRequest" });
   const [resTopic] = encodeEventTopics({ abi: validationAbi, eventName: "ValidationResponse" });
-  const source = typeof args["from-block"] === "string" ? `RPC desde bloque ${args["from-block"]}` : "Routescan (indexador)";
+  const source = typeof args["from-block"] === "string" ? `RPC from block ${args["from-block"]}` : "Routescan (indexer)";
   const fetchLogs = typeof args["from-block"] === "string"
     ? (t0) => logsRpc(t0, requestHash, BigInt(args["from-block"]),
         typeof args["to-block"] === "string" ? BigInt(args["to-block"]) : undefined)
@@ -98,7 +98,7 @@ run(async () => {
 
   const reqs = (await fetchLogs(reqTopic)).map((l) => decode("ValidationRequest", l));
   const resps = (await fetchLogs(resTopic)).map((l) => decode("ValidationResponse", l));
-  console.log(`eventos (${source}): ${reqs.length} ValidationRequest, ${resps.length} ValidationResponse`);
+  console.log(`events (${source}): ${reqs.length} ValidationRequest, ${resps.length} ValidationResponse`);
   for (const r of reqs) console.log("ValidationRequest " + bigintJson(r));
   for (const r of resps) console.log("ValidationResponse " + bigintJson(r));
 });

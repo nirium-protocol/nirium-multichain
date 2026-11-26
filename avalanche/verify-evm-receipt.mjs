@@ -29,9 +29,9 @@
 // --no-sig skips the `agent` block entirely (used for third-party txs we did
 // not sign); the record hash and every on-chain check still run.
 //
-// TODO (out of scope 26-nov): payers that are smart wallets (ERC-1271/6492)
+// Not supported yet: payers that are smart wallets (ERC-1271/6492)
 // need publicClient.verifyMessage instead of the standalone ECDSA verifyMessage.
-// TODO: seller-signed bindings (agent.key == payment.to) once that role exists.
+// Not supported yet: seller-signed bindings (agent.key == payment.to) once that role exists.
 //
 // No keys, no writes: only eth_chainId and eth_getTransactionReceipt.
 // Exit code 0 = every check passed, 1 = at least one failed, 2 = bad input.

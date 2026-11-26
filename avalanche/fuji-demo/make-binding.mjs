@@ -11,7 +11,7 @@
 //
 // Reads the receipt over public RPC, finds the USDC Transfer from the payer (block-level logIndex)
 // and the matching AuthorizationUsed nonce, builds `record` with keys already sorted, and signs
-// "nirium-audit-v1:<content_sha256>" with EIP-191. Output matches section 5.1 and is accepted by
+// "nirium-audit-v1:<content_sha256>" with EIP-191. Output follows docs/payment-binding-v1.md and is accepted by
 // ../verify-evm-receipt.mjs (use --no-sig there for unsigned output).
 import { readFileSync, writeFileSync } from "node:fs";
 import { createHash } from "node:crypto";

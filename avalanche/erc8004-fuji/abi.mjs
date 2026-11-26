@@ -1,5 +1,5 @@
-// ABI minima extraida el 26-nov-2026 de la API de Routescan (getabi) de las
-// implementaciones verificadas en Fuji. No editar a mano: regenerar desde la fuente.
+// Minimal ABI extracted on 26-nov-2026 from Routescan's getabi API for the
+// verified implementations on Fuji. Do not edit by hand: regenerate from the source.
 // IdentityRegistryUpgradeable impl 0x7274e874ca62410a93bd8bf61c69d8045e399c02
 // ValidationRegistryUpgradeable impl 0xdb31f5d9167f8ebc8b30fbbf814c4d297c2d7f99
 export const identityAbi = [
