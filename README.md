@@ -1,5 +1,16 @@
 # nirium-multichain
 
+> **Archived.** On 26 Nov 2026 this repo was split in two, and work continues there:
+> [`nirium-solana`](https://github.com/nirium-protocol/nirium-solana) and
+> [`nirium-avalanche`](https://github.com/nirium-protocol/nirium-avalanche).
+>
+> It stays public and read-only because three ERC-8004 records on Avalanche Fuji point at files
+> in this repo, pinned to commit
+> [`9321ce8`](https://github.com/nirium-protocol/nirium-multichain/tree/9321ce8). The requests and
+> responses on-chain hash those exact bytes, so they must keep resolving. See
+> [`nirium-avalanche/evidence`](https://github.com/nirium-protocol/nirium-avalanche/tree/main/evidence)
+> for the transactions.
+
 Nirium receipts for x402 payments on Solana and Avalanche.
 
 A Nirium receipt is a signed statement about a payment: which order it paid and who declared it.
